@@ -5,135 +5,271 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EL CHULO — Tienda de Moda</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
-<style> 
+<style>
   :root {
     --black: #0a0a0a; --white: #fafafa; --accent: #e8462a; --gold: #c9a84c;
     --soft: #f4f1ec; --gray: #888; --light-gray: #e8e8e8; --card-bg: #fff; --nav-height: 64px;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-box-sizing:border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--soft); color: var(--black); overflow-x: hidden; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--soft); color: var(--black); overflow-x: hidden; -webkit-text-size-adjust: 100%; }
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--soft); }
   ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-  /* ── CORRECCIÓN CRÍTICA: eliminar regla img global que rompe el carrusel ── */
-  /* La regla img global con height fijo se elimina. Cada contexto define su propio estilo. */
-
   .top-bar { background: var(--black); color: var(--white); text-align:center; font-size: 12px; letter-spacing: 2px; padding: 8px; text-transform: uppercase; }
 
-  nav { position: sticky; top: 0; z-index: 1000; background: var(--white); border-bottom: 2px solid var(--black); height: var(--nav-height); display: flex; align-items: center; padding: 0 2rem; gap: 1rem; }
+  /* ── NAV: Safari sticky fix ── */
+  nav {
+    position: -webkit-sticky; /* prefijo necesario para Safari */
+    position: sticky;
+    top: 0; z-index: 1000; background: var(--white); border-bottom: 2px solid var(--black);
+    height: var(--nav-height); display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center; padding: 0 2rem; gap: 1rem;
+  }
   .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 4px; color: var(--black); text-decoration: none; margin-right: auto; }
   .nav-logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 0.25rem; }
-  .gender-btn { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1.05rem; padding: 8px 20px; border: 2px solid var(--black); background: transparent; cursor: pointer; transition: all 0.2s; }
+  .nav-links { display: -webkit-flex; display: flex; gap: 0.25rem; }
+  /* Safari aplica estilos nativos a los botones — forzamos apariencia plana */
+  .gender-btn {
+    -webkit-appearance: none; appearance: none;
+    font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1.05rem;
+    padding: 8px 20px; border: 2px solid var(--black);
+    background: transparent; cursor: pointer; transition: all 0.2s;
+    border-radius: 0; /* Safari redondea botones por defecto */
+  }
   .gender-btn:hover, .gender-btn.active { background: var(--black); color: var(--white); }
   .gender-btn.women.active { background: var(--accent); border-color: var(--accent); color: var(--white); }
-  .cart-btn { position: relative; background: var(--accent); color: var(--white); border: none; padding: 10px 20px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; display: flex; align-items: center; gap: 8px; transition: transform 0.15s; }
-  .cart-btn:hover { transform: scale(1.05); }
-  .cart-count { background: var(--black); color: var(--white); border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-family: 'DM Sans', sans-serif; font-weight: 600; }
+  .cart-btn {
+    -webkit-appearance: none; appearance: none;
+    position: relative; background: var(--accent); color: var(--white); border: none;
+    padding: 10px 20px; cursor: pointer; font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem; letter-spacing: 2px;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center; gap: 8px;
+    transition: -webkit-transform 0.15s; transition: transform 0.15s;
+    border-radius: 0;
+  }
+  .cart-btn:hover { -webkit-transform: scale(1.05); transform: scale(1.05); }
+  .cart-count {
+    background: var(--black); color: var(--white); border-radius: 50%;
+    width: 20px; height: 20px; font-size: 11px;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+  }
 
-  .hero { background: var(--black); color: var(--white); display: grid; grid-template-columns: 1fr 1fr; min-height: 480px; overflow: hidden; }
-  .hero-text { padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; }
+  /* ── HERO: flexbox en vez de grid para máxima compatibilidad Safari ── */
+  .hero {
+    background: var(--black); color: var(--white);
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: row; flex-direction: row;
+    min-height: 480px; overflow: hidden;
+  }
+  .hero-text {
+    padding: 5rem 4rem;
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: column; flex-direction: column;
+    -webkit-justify-content: center; justify-content: center;
+    -webkit-flex: 1 1 50%; flex: 1 1 50%; /* equivale a 1fr */
+    min-width: 0;
+  }
   .hero-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
-  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 7vw, 6rem); line-height: 0.9; margin-bottom: 1.5rem; }
+  /* clamp() no funciona en Safari < 13.1 — usamos font-size fijo + vw con max via media query */
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem; /* fallback base */
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    line-height: 0.9; margin-bottom: 1.5rem;
+  }
+  @media (max-width: 700px)  { .hero-title { font-size: 3.5rem; } }
+  @media (min-width: 1200px) { .hero-title { font-size: 6rem; } }
   .hero-title em { font-family: 'Playfair Display', serif; color: var(--accent); }
   .hero-sub { color: #aaa; font-size: 15px; margin-bottom: 2rem; max-width: 340px; line-height: 1.6; }
-  .hero-cta { display: inline-block; background: var(--accent); color: var(--white); padding: 14px 36px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 3px; font-size: 1.1rem; border: none; cursor: pointer; transition: background 0.2s, transform 0.15s; text-decoration: none; }
-  .hero-cta:hover { background: #c73820; transform: translateY(-2px); }
-  .hero-visual { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .hero-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 60% 40%, rgba(232,70,42,0.15) 0%, transparent 60%); }
-  .hero-mannequin { font-size: 10rem; opacity: 0.6; animation: float 4s ease-in-out infinite; }
+  .hero-cta {
+    display: inline-block; background: var(--accent); color: var(--white);
+    padding: 14px 36px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 3px;
+    font-size: 1.1rem; border: none; cursor: pointer;
+    -webkit-transition: background 0.2s, -webkit-transform 0.15s;
+    transition: background 0.2s, transform 0.15s;
+    text-decoration: none; -webkit-appearance: none; appearance: none; border-radius: 0;
+    -webkit-align-self: flex-start; align-self: flex-start; /* no se estira al ancho completo */
+  }
+  .hero-cta:hover { background: #c73820; -webkit-transform: translateY(-2px); transform: translateY(-2px); }
+  .hero-visual {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    -webkit-flex: 1 1 50%; flex: 1 1 50%;
+    position: relative; overflow: hidden; min-height: 480px;
+  }
+  .hero-visual::before {
+    content: ''; position: absolute; top:0; right:0; bottom:0; left:0;
+    background: radial-gradient(circle at 60% 40%, rgba(232,70,42,0.15) 0%, transparent 60%);
+  }
+  .hero-mannequin { font-size: 10rem; opacity: 0.6; -webkit-animation: float 4s ease-in-out infinite; animation: float 4s ease-in-out infinite; }
+  @-webkit-keyframes float { 0%,100%{-webkit-transform:translateY(0);transform:translateY(0)} 50%{-webkit-transform:translateY(-16px);transform:translateY(-16px)} }
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
 
-  .category-bar { background: var(--white); border-bottom: 1px solid var(--light-gray); padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; position: sticky; top: var(--nav-height); z-index: 900; }
+  /* ── CATEGORY BAR: sticky con prefijo Safari ── */
+  .category-bar {
+    background: var(--white); border-bottom: 1px solid var(--light-gray);
+    padding: 0 2rem; display: -webkit-flex; display: flex; gap: 0;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; /* scroll suave en iOS */
+    position: -webkit-sticky; position: sticky;
+    top: var(--nav-height); z-index: 900;
+  }
   .category-bar::-webkit-scrollbar { height: 0; }
-  .cat-tab { padding: 16px 22px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; color: var(--gray); }
+  .cat-tab {
+    -webkit-appearance: none; appearance: none;
+    padding: 16px 22px; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    white-space: nowrap; border-bottom: 3px solid transparent;
+    transition: all 0.2s; color: var(--gray); border-radius: 0;
+  }
   .cat-tab:hover { color: var(--black); }
   .cat-tab.active { color: var(--black); border-bottom-color: var(--accent); font-weight: 600; }
 
   .shop-section { padding: 3rem 2rem 4rem; }
-  .section-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 2rem; }
+  .section-header { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; gap: 1rem; margin-bottom: 2rem; }
   .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 3px; }
   .section-count { color: var(--gray); font-size: 13px; }
   .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.5rem; }
 
-  .product-card { background: var(--card-bg); overflow: hidden; transition: transform 0.25s, box-shadow 0.25s; cursor: pointer; position: relative; }
-  .product-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
+  .product-card { background: var(--card-bg); overflow: hidden; transition: -webkit-transform 0.25s, transform 0.25s, box-shadow 0.25s; cursor: pointer; position: relative; }
+  .product-card:hover { -webkit-transform: translateY(-6px); transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
   .badge { position: absolute; top: 12px; left: 12px; z-index: 2; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 8px; }
   .badge-new { background: var(--black); color: var(--white); }
   .badge-sale { background: var(--accent); color: var(--white); }
   .badge-hot { background: var(--gold); color: var(--black); }
-  .wishlist-btn { position: absolute; top: 12px; right: 12px; z-index: 2; background: rgba(255,255,255,0.85); border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(4px); }
-  .wishlist-btn:hover { background: var(--white); transform: scale(1.1); }
+  .wishlist-btn {
+    -webkit-appearance: none; appearance: none;
+    position: absolute; top: 12px; right: 12px; z-index: 2;
+    background: rgba(255,255,255,0.85); border: none; width: 34px; height: 34px;
+    border-radius: 50%; cursor: pointer; font-size: 15px;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    transition: all 0.2s;
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  }
+  .wishlist-btn:hover { background: var(--white); -webkit-transform: scale(1.1); transform: scale(1.1); }
   .wishlist-btn.active { color: var(--accent); }
 
-  /* ── CARRUSEL: las imágenes se escalan correctamente con object-fit: cover ── */
-  .product-carousel { position: relative; width: 100%; aspect-ratio: 3/4; overflow: hidden; background: linear-gradient(135deg, #e8e8e8, #d0d0d0); cursor: zoom-in; }
-  .carousel-track { display: flex; height: 100%; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
-  .carousel-slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem; flex-shrink: 0; background: linear-gradient(135deg, #e8e8e8, #d0d0d0); }
-
-  /* ── CORRECCIÓN CLAVE: imágenes dentro del carrusel ── */
+  /* ── CARRUSEL: aspect-ratio con fallback para Safari antiguo ── */
+  .product-carousel {
+    position: relative; width: 100%;
+    /* Fallback para Safari < 15 que no soporta aspect-ratio */
+    padding-top: 133.33%; /* 4:3 = 100/(3/4)*100 */
+    overflow: hidden; background: linear-gradient(135deg, #e8e8e8, #d0d0d0); cursor: zoom-in;
+  }
+  /* Safari 15+ sí soporta aspect-ratio, lo sobreescribimos */
+  @supports (aspect-ratio: 3/4) {
+    .product-carousel { padding-top: 0; aspect-ratio: 3/4; }
+  }
+  .carousel-track {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: -webkit-flex; display: flex; height: 100%;
+    -webkit-transition: -webkit-transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+  }
+  /* Cuando aspect-ratio es soportado, quitar el posicionamiento absoluto del track */
+  @supports (aspect-ratio: 3/4) {
+    .carousel-track { position: static; }
+  }
+  .carousel-slide {
+    min-width: 100%; height: 100%;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    font-size: 5rem; -webkit-flex-shrink: 0; flex-shrink: 0;
+    background: linear-gradient(135deg, #e8e8e8, #d0d0d0);
+  }
   .carousel-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;       /* recorta y llena sin deformar */
-    object-position: center top; /* prioriza la parte superior (cara/torso) */
+    width: 100%; height: 100%;
+    object-fit: cover; -o-object-fit: cover;
+    object-position: center top; -o-object-position: center top;
     display: block;
   }
 
-  .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; z-index: 3; opacity: 0; transition: opacity 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  .carousel-arrow {
+    -webkit-appearance: none; appearance: none;
+    position: absolute; top: 50%; -webkit-transform: translateY(-50%); transform: translateY(-50%);
+    background: rgba(255,255,255,0.9); border: none; width: 28px; height: 28px;
+    border-radius: 50%; cursor: pointer; font-size: 12px;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    z-index: 3; opacity: 0; transition: opacity 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
   .product-carousel:hover .carousel-arrow { opacity: 1; }
   .carousel-arrow.prev { left: 6px; }
   .carousel-arrow.next { right: 6px; }
-  .carousel-arrow:hover { background: var(--white); transform: translateY(-50%) scale(1.1); }
-  .carousel-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 3; }
-  .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); border: none; cursor: pointer; padding: 0; transition: all 0.2s; }
-  .carousel-dot.active { background: var(--white); transform: scale(1.3); }
-  .zoom-icon { position: absolute; bottom: 10px; right: 10px; z-index: 3; background: rgba(0,0,0,0.5); color: var(--white); border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: zoom-in; opacity: 0; transition: opacity 0.2s; }
+  .carousel-arrow:hover { background: var(--white); -webkit-transform: translateY(-50%) scale(1.1); transform: translateY(-50%) scale(1.1); }
+  .carousel-dots {
+    position: absolute; bottom: 8px; left: 50%;
+    -webkit-transform: translateX(-50%); transform: translateX(-50%);
+    display: -webkit-flex; display: flex; gap: 5px; z-index: 3;
+  }
+  .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); border: none; cursor: pointer; padding: 0; transition: all 0.2s; -webkit-appearance: none; appearance: none; }
+  .carousel-dot.active { background: var(--white); -webkit-transform: scale(1.3); transform: scale(1.3); }
+  .zoom-icon {
+    -webkit-appearance: none; appearance: none;
+    position: absolute; bottom: 10px; right: 10px; z-index: 3;
+    background: rgba(0,0,0,0.5); color: var(--white); border: none; border-radius: 50%;
+    width: 28px; height: 28px; font-size: 13px;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    cursor: zoom-in; opacity: 0; transition: opacity 0.2s;
+  }
   .product-carousel:hover .zoom-icon { opacity: 1; }
 
   /* ── LIGHTBOX ── */
-  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-  .lightbox.open { opacity: 1; pointer-events: all; }
-  .lightbox-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; flex-shrink: 0; }
-  .lightbox-title { font-family:'Bebas Neue',sans-serif; color: var(--white); font-size: 1.3rem; letter-spacing: 2px; }
-  .lightbox-close { background: none; border: none; color: var(--white); font-size: 2rem; cursor: pointer; line-height: 1; transition: transform 0.2s; padding: 4px 8px; }
-  .lightbox-close:hover { transform: rotate(90deg); color: var(--accent); }
-  .lightbox-main { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; min-height: 0; }
-  .lightbox-track { display: flex; height: 100%; width: 100%; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
-  .lightbox-slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 1rem; }
-  .lightbox-slide .lb-img-wrap { max-width: min(90vw, 600px); max-height: 70vh; display: flex; align-items: center; justify-content: center; font-size: 14rem; }
-
-  /* ── CORRECCIÓN: imágenes en lightbox ── */
-  .lightbox-slide .lb-img-wrap img {
-    max-width: 100%;
-    max-height: 70vh;
-    width: auto;
-    height: auto;
-    object-fit: contain;    /* en lightbox muestra la imagen completa sin recortar */
-    border-radius: 2px;
-    box-shadow: 0 8px 60px rgba(0,0,0,0.6);
-    display: block;
+  .lightbox {
+    position: fixed; top:0; right:0; bottom:0; left:0; /* inset fallback */
+    background: rgba(0,0,0,0.95); z-index: 5000;
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: column; flex-direction: column;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
   }
-
-  .lightbox-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: var(--white); width: 48px; height: 48px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; z-index: 2; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(4px); }
-  .lightbox-arrow:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-50%) scale(1.05); }
+  .lightbox.open { opacity: 1; pointer-events: all; }
+  .lightbox-header { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; padding: 1rem 1.5rem; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .lightbox-title { font-family:'Bebas Neue',sans-serif; color: var(--white); font-size: 1.3rem; letter-spacing: 2px; }
+  .lightbox-close { background: none; border: none; color: var(--white); font-size: 2rem; cursor: pointer; line-height: 1; transition: -webkit-transform 0.2s; transition: transform 0.2s; padding: 4px 8px; -webkit-appearance: none; appearance: none; }
+  .lightbox-close:hover { -webkit-transform: rotate(90deg); transform: rotate(90deg); color: var(--accent); }
+  .lightbox-main { -webkit-flex: 1; flex: 1; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; position: relative; overflow: hidden; min-height: 0; }
+  .lightbox-track { display: -webkit-flex; display: flex; height: 100%; width: 100%; -webkit-transition: -webkit-transform 0.4s cubic-bezier(0.4,0,0.2,1); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .lightbox-slide { min-width: 100%; height: 100%; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; -webkit-flex-shrink: 0; flex-shrink: 0; padding: 1rem; }
+  /* min() no funciona en Safari antiguo — usamos max-width directamente */
+  .lightbox-slide .lb-img-wrap { width: 90vw; max-width: 600px; max-height: 70vh; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; font-size: 14rem; }
+  .lightbox-slide .lb-img-wrap img {
+    max-width: 100%; max-height: 70vh; width: auto; height: auto;
+    object-fit: contain; -o-object-fit: contain;
+    border-radius: 2px; box-shadow: 0 8px 60px rgba(0,0,0,0.6); display: block;
+  }
+  .lightbox-arrow {
+    -webkit-appearance: none; appearance: none;
+    position: absolute; top: 50%; -webkit-transform: translateY(-50%); transform: translateY(-50%);
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white); width: 48px; height: 48px; border-radius: 50%; font-size: 1.2rem;
+    cursor: pointer; z-index: 2;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    transition: all 0.2s; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  }
+  .lightbox-arrow:hover { background: var(--accent); border-color: var(--accent); -webkit-transform: translateY(-50%) scale(1.05); transform: translateY(-50%) scale(1.05); }
   .lightbox-arrow.prev { left: 1rem; }
   .lightbox-arrow.next { right: 1rem; }
-  .lightbox-footer { padding: 1rem 1.5rem 1.5rem; flex-shrink: 0; }
-  .lightbox-thumbnails { display: flex; gap: 8px; justify-content: center; margin-bottom: 1rem; flex-wrap: wrap; }
-  .lb-thumb { width: 56px; height: 70px; background: rgba(255,255,255,0.08); border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; transition: all 0.2s; border-radius: 2px; overflow: hidden; flex-shrink: 0; }
-
-  /* ── CORRECCIÓN: miniaturas del lightbox ── */
-  .lb-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-  }
-
+  .lightbox-footer { padding: 1rem 1.5rem 1.5rem; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .lightbox-thumbnails { display: -webkit-flex; display: flex; gap: 8px; -webkit-justify-content: center; justify-content: center; margin-bottom: 1rem; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
+  .lb-thumb { width: 56px; height: 70px; background: rgba(255,255,255,0.08); border: 2px solid transparent; cursor: pointer; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; font-size: 1.8rem; transition: all 0.2s; border-radius: 2px; overflow: hidden; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .lb-thumb img { width: 100%; height: 100%; object-fit: cover; -o-object-fit: cover; object-position: center top; display: block; }
   .lb-thumb.active { border-color: var(--accent); }
   .lb-thumb:hover { border-color: var(--white); }
   .lightbox-counter { text-align: center; color: rgba(255,255,255,0.5); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
@@ -141,73 +277,70 @@
   .product-info { padding: 14px 16px 18px; }
   .product-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
   .product-brand { font-size: 11px; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-  .product-price-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .product-price-row { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; margin-bottom: 12px; }
   .price-current { font-size: 16px; font-weight: 700; color: var(--black); }
   .price-old { font-size: 13px; color: var(--gray); text-decoration: line-through; }
   .price-discount { font-size: 11px; color: var(--accent); font-weight: 700; }
-  .add-cart-btn { width: 100%; padding: 10px; border: 2px solid var(--black); background: transparent; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+  .add-cart-btn { -webkit-appearance: none; appearance: none; width: 100%; padding: 10px; border: 2px solid var(--black); background: transparent; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; cursor: pointer; transition: all 0.2s; border-radius: 0; }
   .add-cart-btn:hover { background: var(--black); color: var(--white); }
   .add-cart-btn.added { background: var(--accent); border-color: var(--accent); color: var(--white); }
 
-  .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .cart-overlay { position: fixed; top:0; right:0; bottom:0; left:0; background: rgba(0,0,0,0.5); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   .cart-overlay.open { opacity: 1; pointer-events: all; }
-  .cart-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--white); z-index: 2001; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow: -8px 0 40px rgba(0,0,0,0.15); }
-  .cart-panel.open { transform: translateX(0); }
-  .cart-header { padding: 1.5rem 1.5rem 1rem; border-bottom: 2px solid var(--black); display: flex; align-items: center; justify-content: space-between; }
+  .cart-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--white); z-index: 2001; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; -webkit-transform: translateX(100%); transform: translateX(100%); -webkit-transition: -webkit-transform 0.35s cubic-bezier(0.4,0,0.2,1); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow: -8px 0 40px rgba(0,0,0,0.15); }
+  .cart-panel.open { -webkit-transform: translateX(0); transform: translateX(0); }
+  .cart-header { padding: 1.5rem 1.5rem 1rem; border-bottom: 2px solid var(--black); display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; }
   .cart-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 3px; }
-  .cart-close { background: none; border: none; font-size: 1.8rem; cursor: pointer; line-height: 1; transition: transform 0.2s; }
-  .cart-close:hover { transform: rotate(90deg); }
-  .cart-items { flex: 1; overflow-y: auto; padding: 1rem 1.5rem; }
+  .cart-close { background: none; border: none; font-size: 1.8rem; cursor: pointer; line-height: 1; transition: -webkit-transform 0.2s; transition: transform 0.2s; -webkit-appearance: none; appearance: none; }
+  .cart-close:hover { -webkit-transform: rotate(90deg); transform: rotate(90deg); }
+  .cart-items { -webkit-flex: 1; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 1rem 1.5rem; }
   .cart-empty { text-align: center; padding: 4rem 2rem; color: var(--gray); }
   .cart-empty-icon { font-size: 4rem; margin-bottom: 1rem; }
-  .cart-item { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--light-gray); animation: slideIn 0.3s ease; }
+  .cart-item { display: -webkit-flex; display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--light-gray); -webkit-animation: slideIn 0.3s ease; animation: slideIn 0.3s ease; }
+  @-webkit-keyframes slideIn { from { opacity:0; -webkit-transform:translateX(20px); transform:translateX(20px) } to { opacity:1; -webkit-transform:none; transform:none } }
   @keyframes slideIn { from { opacity:0; transform:translateX(20px) } to { opacity:1; transform:none } }
-  .cart-item-img { width: 72px; height: 90px; background: var(--soft); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; flex-shrink: 0; overflow: hidden; }
-
-  /* ── CORRECCIÓN: imágenes en el carrito ── */
-  .cart-item-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
-  }
-
-  .cart-item-details { flex: 1; }
+  .cart-item-img { width: 72px; height: 90px; background: var(--soft); display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; font-size: 2.5rem; -webkit-flex-shrink: 0; flex-shrink: 0; overflow: hidden; }
+  .cart-item-img img { width: 100%; height: 100%; object-fit: cover; -o-object-fit: cover; object-position: center top; display: block; }
+  .cart-item-details { -webkit-flex: 1; flex: 1; }
   .cart-item-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
   .cart-item-meta { font-size: 12px; color: var(--gray); margin-bottom: 8px; }
   .cart-item-price { font-size: 15px; font-weight: 700; }
-  .cart-item-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-  .qty-btn { width: 26px; height: 26px; border: 1px solid var(--light-gray); background: none; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .cart-item-actions { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; margin-top: 8px; }
+  .qty-btn { -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border: 1px solid var(--light-gray); background: none; cursor: pointer; font-size: 1rem; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; transition: all 0.15s; border-radius: 0; }
   .qty-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
   .qty-display { font-weight: 600; font-size: 14px; min-width: 20px; text-align: center; }
-  .remove-btn { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 18px; margin-left: auto; transition: color 0.2s; }
+  .remove-btn { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 18px; margin-left: auto; transition: color 0.2s; -webkit-appearance: none; appearance: none; }
   .remove-btn:hover { color: var(--accent); }
   .cart-footer { padding: 1.5rem; border-top: 2px solid var(--black); }
-  .cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .cart-total-row { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: center; align-items: center; margin-bottom: 1rem; }
   .cart-total-label { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; }
   .cart-total-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; }
-  .checkout-btn { width: 100%; padding: 16px; background: var(--black); color: var(--white); border: none; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 3px; cursor: pointer; margin-bottom: 12px; transition: background 0.2s; }
+  .checkout-btn { -webkit-appearance: none; appearance: none; width: 100%; padding: 16px; background: var(--black); color: var(--white); border: none; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 3px; cursor: pointer; margin-bottom: 12px; transition: background 0.2s; border-radius: 0; }
   .checkout-btn:hover { background: var(--accent); }
-  .share-btn { width: 100%; padding: 14px; background: transparent; color: var(--black); border: 2px solid var(--black); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 3px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .share-btn { -webkit-appearance: none; appearance: none; width: 100%; padding: 14px; background: transparent; color: var(--black); border: 2px solid var(--black); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 3px; cursor: pointer; transition: all 0.2s; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; gap: 8px; border-radius: 0; }
   .share-btn:hover { background: var(--gold); border-color: var(--gold); }
 
   /* ── FORMULARIO DE PEDIDO ── */
   .checkout-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.78);
-    z-index: 4000; display: flex; align-items: center; justify-content: center;
+    position: fixed; top:0; right:0; bottom:0; left:0; background: rgba(0,0,0,0.78);
+    z-index: 4000;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.3s;
   }
   .checkout-overlay.open { opacity: 1; pointer-events: all; }
   .checkout-form-box {
     background: var(--white); width: 92%; max-width: 500px;
     padding: 2.5rem 2.5rem 2rem; position: relative;
-    transform: translateY(40px); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-    max-height: 92vh; overflow-y: auto;
+    -webkit-transform: translateY(40px); transform: translateY(40px);
+    -webkit-transition: -webkit-transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
-  .checkout-overlay.open .checkout-form-box { transform: translateY(0); }
-  .checkout-form-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.6rem; cursor: pointer; transition: transform 0.2s, color 0.2s; line-height: 1; }
-  .checkout-form-close:hover { transform: rotate(90deg); color: var(--accent); }
+  .checkout-overlay.open .checkout-form-box { -webkit-transform: translateY(0); transform: translateY(0); }
+  .checkout-form-close { -webkit-appearance: none; appearance: none; position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.6rem; cursor: pointer; transition: -webkit-transform 0.2s, transform 0.2s, color 0.2s; line-height: 1; }
+  .checkout-form-close:hover { -webkit-transform: rotate(90deg); transform: rotate(90deg); color: var(--accent); }
   .checkout-form-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; margin-bottom: 0.3rem; }
   .checkout-form-sub { color: var(--gray); font-size: 13px; margin-bottom: 1.6rem; line-height: 1.5; }
 
@@ -216,9 +349,9 @@
     border-left: 4px solid var(--accent);
   }
   .form-order-summary h4 { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 10px; font-weight: 700; }
-  .form-order-item { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; color: var(--black); }
+  .form-order-item { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; font-size: 13px; padding: 4px 0; color: var(--black); }
   .form-order-item span:last-child { font-weight: 600; }
-  .form-order-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; }
+  .form-order-total { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; font-size: 16px; font-weight: 700; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; }
 
   .form-group { margin-bottom: 1.3rem; }
   .form-group label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 7px; }
@@ -244,38 +377,65 @@
   .confirm-whatsapp-btn:hover { background: #1aad52; }
 
   /* ── SHARE MODAL ── */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .modal-overlay {
+    position: fixed; top:0; right:0; bottom:0; left:0;
+    background: rgba(0,0,0,0.7); z-index: 3000;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--white); max-width: 480px; width: 90%; padding: 2rem; position: relative; transform: scale(0.9); transition: transform 0.3s; }
-  .modal-overlay.open .modal { transform: scale(1); }
-  .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+  .modal {
+    background: var(--white); max-width: 480px; width: 90%;
+    padding: 2rem; position: relative;
+    -webkit-transform: scale(0.9); transform: scale(0.9);
+    -webkit-transition: -webkit-transform 0.3s; transition: transform 0.3s;
+  }
+  .modal-overlay.open .modal { -webkit-transform: scale(1); transform: scale(1); }
+  .modal-close { -webkit-appearance: none; appearance: none; position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
   .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; margin-bottom: 0.5rem; }
   .modal-sub { color: var(--gray); font-size: 13px; margin-bottom: 1.5rem; }
-  .share-order-list { border: 1px solid var(--light-gray); max-height: 200px; overflow-y: auto; margin-bottom: 1.5rem; }
-  .share-order-item { display: flex; justify-content: space-between; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--light-gray); }
+  .share-order-list { border: 1px solid var(--light-gray); max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-bottom: 1.5rem; }
+  .share-order-item { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--light-gray); }
   .share-order-item:last-child { border-bottom: none; }
-  .share-link-box { display: flex; gap: 8px; margin-bottom: 1.5rem; }
-  .share-link-input { flex: 1; padding: 10px 12px; border: 2px solid var(--black); font-size: 12px; background: var(--soft); color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; outline: none; }
-  .copy-link-btn { padding: 10px 18px; background: var(--black); color: var(--white); border: none; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.95rem; transition: background 0.2s; white-space: nowrap; }
+  .share-link-box { display: -webkit-flex; display: flex; gap: 8px; margin-bottom: 1.5rem; }
+  .share-link-input { -webkit-flex: 1; flex: 1; padding: 10px 12px; border: 2px solid var(--black); font-size: 12px; background: var(--soft); color: var(--gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; outline: none; border-radius: 0; -webkit-appearance: none; appearance: none; }
+  .copy-link-btn { -webkit-appearance: none; appearance: none; padding: 10px 18px; background: var(--black); color: var(--white); border: none; cursor: pointer; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 0.95rem; transition: background 0.2s; white-space: nowrap; border-radius: 0; }
   .copy-link-btn:hover { background: var(--accent); }
-  .share-icons { display: flex; gap: 10px; }
-  .share-icon-btn { flex: 1; padding: 12px 8px; border: 1px solid var(--light-gray); background: none; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 1.3rem; }
+  .share-icons { display: -webkit-flex; display: flex; gap: 10px; }
+  .share-icon-btn { -webkit-appearance: none; appearance: none; -webkit-flex: 1; flex: 1; padding: 12px 8px; border: 1px solid var(--light-gray); background: none; cursor: pointer; transition: all 0.2s; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; -webkit-align-items: center; align-items: center; gap: 4px; font-size: 1.3rem; border-radius: 0; }
   .share-icon-btn span { font-size: 10px; font-family: 'DM Sans', sans-serif; color: var(--gray); letter-spacing: 1px; text-transform: uppercase; }
   .share-icon-btn:hover { background: var(--soft); border-color: var(--black); }
 
-  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--black); color: var(--white); padding: 12px 24px; font-size: 14px; letter-spacing: 1px; z-index: 6000; transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); pointer-events: none; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  /* ── TOAST: Safari no interpreta bien el transform compuesto en una propiedad ── */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    -webkit-transform: translateX(-50%) translateY(80px);
+    transform: translateX(-50%) translateY(80px);
+    background: var(--black); color: var(--white); padding: 12px 24px;
+    font-size: 14px; letter-spacing: 1px; z-index: 6000;
+    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    pointer-events: none;
+  }
+  .toast.show {
+    -webkit-transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0);
+  }
 
   @media (max-width: 768px) {
-    .hero { grid-template-columns: 1fr; }
+    /* Hero: apila verticalmente en móvil */
+    .hero { -webkit-flex-direction: column; flex-direction: column; }
     .hero-visual { display: none; }
-    .hero-text { padding: 3rem 1.5rem; }
+    .hero-text { padding: 3rem 1.5rem; -webkit-flex: none; flex: none; width: 100%; }
     .nav-logo { font-size: 1.5rem; }
     .gender-btn { padding: 6px 12px; font-size: 0.9rem; }
     .shop-section { padding: 2rem 1rem; }
     .product-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
     .cart-panel { width: 100%; }
     .checkout-form-box { padding: 1.5rem; }
+    nav { top: 0; }
   }
 </style>
 </head>
@@ -461,24 +621,24 @@ const products = {
     { id:'m18', name:'Blazer Sport',                      brand:'EL CHULO', price:3200,  oldPrice:5200,  category:'garments',  images:['🥼'], badge:'hot', discount:'-38%' },
   ],
   women: [
-    { id:'w1',  name:'Camiseta Crop Acanalada',          brand:'EL CHULO', price:500,  oldPrice:900,   category:'tshirts',   images:['👚'], badge:'sale', discount:'-45%' },
-    { id:'w2',  name:'Camiseta Estampado Floral',        brand:'EL CHULO', price:650,  oldPrice:null,  category:'tshirts',   images:['👚'], badge:'new' },
-    { id:'w3',  name:'Camiseta Tie-Dye Oversize',        brand:'EL CHULO', price:750,  oldPrice:1300,  category:'tshirts',   images:['👚'], badge:'hot', discount:'-42%' },
-    { id:'w4',  name:'Pantalón Tiro Alto Acampanado',    brand:'EL CHULO', price:1300, oldPrice:2200,  category:'pants',     images:['👖'], badge:'sale', discount:'-41%' },
-    { id:'w5',  name:'Pantalón Lino Pierna Ancha',       brand:'EL CHULO', price:1500, oldPrice:null,  category:'pants',     images:['👖'], badge:'new' },
-    { id:'w6',  name:'Jeans Skinny Rotos',               brand:'EL CHULO', price:1400, oldPrice:2300,  category:'pants',     images:['👖'], badge:null },
-    { id:'w7',  name:'Pullover Hombro Descubierto',      brand:'EL CHULO', price:1100, oldPrice:2000,  category:'pullovers', images:['🧶'], badge:'sale', discount:'-45%' },
-    { id:'w8',  name:'Pullover Crop de Punto',           brand:'EL CHULO', price:1400, oldPrice:null,  category:'pullovers', images:['🧶'], badge:'new' },
-    { id:'w9',  name:'Suéter Oversize Trenzado',         brand:'EL CHULO', price:1800, oldPrice:3000,  category:'pullovers', images:['🧥'], badge:null },
-    { id:'w10', name:'Botines de Tacón',                 brand:'EL CHULO', price:2200, oldPrice:3600,  category:'shoes',     images:['👢'], badge:'sale', discount:'-39%' },
-    { id:'w11', name:'Zapatillas con Plataforma',        brand:'EL CHULO', price:2000, oldPrice:null,  category:'shoes',     images:['👟'], badge:'new' },
-    { id:'w12', name:'Sandalias con Tiras',              brand:'EL CHULO', price:1200, oldPrice:2000,  category:'shoes',     images:['👡'], badge:'hot', discount:'-40%' },
-    { id:'w13', name:'Sombrero con Lazo Satinado',       brand:'EL CHULO', price:500,  oldPrice:900,   category:'hats',      images:['👒'], badge:'sale', discount:'-44%' },
-    { id:'w14', name:'Sombrero de Sol de Ganchillo',     brand:'EL CHULO', price:700,  oldPrice:null,  category:'hats',      images:['👒'], badge:'new' },
-    { id:'w15', name:'Boina de Lana',                    brand:'EL CHULO', price:550,  oldPrice:1000,  category:'hats',      images:['🎩'], badge:null },
-    { id:'w16', name:'Vestido Midi Floral',              brand:'EL CHULO', price:1800, oldPrice:3200,  category:'garments',  images:['👗'], badge:'sale', discount:'-44%' },
-    { id:'w17', name:'Chaqueta Cuero Sintético',         brand:'EL CHULO', price:2400, oldPrice:null,  category:'garments',  images:['🧥'], badge:'new' },
-    { id:'w18', name:'Blazer Entallado',                 brand:'EL CHULO', price:2800, oldPrice:4400,  category:'garments',  images:['🥼'], badge:'hot', discount:'-36%' },
+    { id:'w1',  name:'Camiseta Crop Acanalada',          brand:'EL CHULO', price:500,  oldPrice:900,   category:'tshirts',   images:['https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80'], badge:'sale', discount:'-45%' },
+    { id:'w2',  name:'Camiseta Estampado Floral',        brand:'EL CHULO', price:650,  oldPrice:null,  category:'tshirts',   images:['https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&q=80'], badge:'new' },
+    { id:'w3',  name:'Camiseta Tie-Dye Oversize',        brand:'EL CHULO', price:750,  oldPrice:1300,  category:'tshirts',   images:['https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=600&q=80'], badge:'hot', discount:'-42%' },
+    { id:'w4',  name:'Pantalón Tiro Alto Acampanado',    brand:'EL CHULO', price:1300, oldPrice:2200,  category:'pants',     images:['https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80'], badge:'sale', discount:'-41%' },
+    { id:'w5',  name:'Pantalón Lino Pierna Ancha',       brand:'EL CHULO', price:1500, oldPrice:null,  category:'pants',     images:['https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?w=600&q=80'], badge:'new' },
+    { id:'w6',  name:'Jeans Skinny Rotos',               brand:'EL CHULO', price:1400, oldPrice:2300,  category:'pants',     images:['https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&q=80'], badge:null },
+    { id:'w7',  name:'Pullover Hombro Descubierto',      brand:'EL CHULO', price:1100, oldPrice:2000,  category:'pullovers', images:['https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&q=80'], badge:'sale', discount:'-45%' },
+    { id:'w8',  name:'Pullover Crop de Punto',           brand:'EL CHULO', price:1400, oldPrice:null,  category:'pullovers', images:['https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80'], badge:'new' },
+    { id:'w9',  name:'Suéter Oversize Trenzado',         brand:'EL CHULO', price:1800, oldPrice:3000,  category:'pullovers', images:['https://images.unsplash.com/photo-1583846783214-7229a91b20ed?w=600&q=80'], badge:null },
+    { id:'w10', name:'Botines de Tacón',                 brand:'EL CHULO', price:2200, oldPrice:3600,  category:'shoes',     images:['https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80'], badge:'sale', discount:'-39%' },
+    { id:'w11', name:'Zapatillas con Plataforma',        brand:'EL CHULO', price:2000, oldPrice:null,  category:'shoes',     images:['https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80'], badge:'new' },
+    { id:'w12', name:'Sandalias con Tiras',              brand:'EL CHULO', price:1200, oldPrice:2000,  category:'shoes',     images:['https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&q=80'], badge:'hot', discount:'-40%' },
+    { id:'w13', name:'Sombrero con Lazo Satinado',       brand:'EL CHULO', price:500,  oldPrice:900,   category:'hats',      images:['https://images.unsplash.com/photo-1582791694770-cbdc9dda338f?w=600&q=80'], badge:'sale', discount:'-44%' },
+    { id:'w14', name:'Sombrero de Sol de Ganchillo',     brand:'EL CHULO', price:700,  oldPrice:null,  category:'hats',      images:['https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=600&q=80'], badge:'new' },
+    { id:'w15', name:'Boina de Lana',                    brand:'EL CHULO', price:550,  oldPrice:1000,  category:'hats',      images:['https://images.unsplash.com/photo-1510598155-17c9571c2b95?w=600&q=80'], badge:null },
+    { id:'w16', name:'Vestido Midi Floral',              brand:'EL CHULO', price:1800, oldPrice:3200,  category:'garments',  images:['https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&q=80'], badge:'sale', discount:'-44%' },
+    { id:'w17', name:'Chaqueta Cuero Sintético',         brand:'EL CHULO', price:2400, oldPrice:null,  category:'garments',  images:['https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80'], badge:'new' },
+    { id:'w18', name:'Blazer Entallado',                 brand:'EL CHULO', price:2800, oldPrice:4400,  category:'garments',  images:['https://images.unsplash.com/photo-1548126032-079a0fb0099d?w=600&q=80'], badge:'hot', discount:'-36%' },
   ]
 };
 
